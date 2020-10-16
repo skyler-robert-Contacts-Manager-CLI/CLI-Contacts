@@ -26,7 +26,6 @@ public class File_IO {
         } else {
             System.out.println("You got no friends!");
         }
-
     }
     public static void addContact(Path filePath, Contact newContact) throws IOException {
         List<String> fileContents = Files.readAllLines(filePath);
@@ -44,22 +43,45 @@ public class File_IO {
     }
 
 
-    public static void deleteContact(Path filePath, Contact contactToDelete) throws IOException{
+    public static void deleteContact(Path filePath, String contactName) throws IOException{
         List<String> fileContents = Files.readAllLines(filePath);
         int fileContentStartSize = fileContents.size();
-        String deleteContactInfo = contactToDelete.getName() + " | " + contactToDelete.getPhoneNumber();
-        fileContents.removeIf(item -> item.equals(deleteContactInfo));
-        if (fileContents.size() < fileContentStartSize){
-            System.err.println("Contact has been deleted");
-        } else {
-            System.err.println("Unable to find contact to delete");
+        // search for contact
+        ArrayList<String> searchResults = File_IO.searchContact(filePath,contactName);
+        if(!searchResults.isEmpty()){
+            for (int i = 0; i <  searchResults.size(); i++) {
+                System.out.println((i+1) +". "+searchResults.get(i));
+            }
+            //  ask user which contact they want delete
+            System.out.println("Select Contact to delete");
+            int userInput = Input.getInt(0,searchResults.size()) -1;
+            // get string from results
+            String deleteContactInfo = searchResults.get(userInput);
+            // if the contacts file has the Contact delete the contact
+            fileContents.removeIf(item -> item.equals(deleteContactInfo));
+            if (fileContents.size() < fileContentStartSize){
+                System.err.println("Contact has been deleted");
+            }
+            Files.write(filePath, fileContents);;
         }
-        Files.write(filePath, fileContents);
-}
 
-public void searchContact(ArrayList contactList){
+    }
 
-}
+
+    public static ArrayList searchContact(Path filePath, String contactName) throws IOException{
+        List<String> fileContents = Files.readAllLines(filePath);
+        ArrayList<String> searchResults = new ArrayList<>();
+        for( String item : fileContents){
+            if(item.toLowerCase().contains(contactName.toLowerCase())){
+                searchResults.add(item);
+            }
+        }
+        if(searchResults.isEmpty()){
+            System.err.println("Contact not Found.");
+        }
+        return searchResults;
+
+    }
 
 public void showAllContacts(ArrayList contactList){
 
