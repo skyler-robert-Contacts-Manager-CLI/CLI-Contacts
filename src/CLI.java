@@ -53,7 +53,7 @@ public class CLI {
     public static boolean getMenuInput(Path filepath) throws IOException{
         System.out.println("Enter an option (1, 2, 3, 4 or 5):");
         // validate user input
-        switch (Input.getInt(1,5)){
+        switch (Input.getInt(1,menuItems.length)){
             case 1:
                 File_IO.printContacts(filepath);
                 break;
