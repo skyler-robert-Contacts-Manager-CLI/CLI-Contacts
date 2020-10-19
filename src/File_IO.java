@@ -19,9 +19,12 @@ public class File_IO {
     public static void printContacts(Path filePath) throws IOException {
         System.out.println();
         List<String> fileContents = Files.readAllLines(filePath);
+        System.out.println("--------------------------------");
+        System.out.printf("%-17s | %-11s%n", "Name", "Number");
+        System.out.println("--------------------------------");
         if (fileContents.size() > 0){
-            for (int i = 0; i < fileContents.size(); i++) {
-                System.out.printf("%d: %s\n", i + 1, fileContents.get(i));
+            for (String fileContent : fileContents) {
+                System.out.printf("%s |\n", fileContent);
             }
         } else {
             System.out.println("You got no friends!");
@@ -29,8 +32,7 @@ public class File_IO {
     }
     public static void addContact(Path filePath, Contact newContact) throws IOException {
         List<String> fileContents = Files.readAllLines(filePath);
-        String newContactInfo = newContact.getName() + " | " + newContact.getPhoneNumber();
-
+        String newContactInfo = String.format("%-17s | %-11s", newContact.getName() ,newContact.getPhoneNumber());
         for (String item: fileContents) {
             if (item.equals(newContactInfo)) {
                 System.err.println("This contact already exists");
@@ -41,7 +43,6 @@ public class File_IO {
         fileContents.add(newContactInfo);
         Files.write(filePath, fileContents);
     }
-
 
     public static void deleteContact(Path filePath, String contactName) throws IOException{
         List<String> fileContents = Files.readAllLines(filePath);
@@ -67,7 +68,6 @@ public class File_IO {
 
     }
 
-
     public static ArrayList searchContact(Path filePath, String contactName) throws IOException{
         List<String> fileContents = Files.readAllLines(filePath);
         ArrayList<String> searchResults = new ArrayList<>();
@@ -82,9 +82,4 @@ public class File_IO {
         return searchResults;
 
     }
-
-public void showAllContacts(ArrayList contactList){
-
-}
-
 }
