@@ -31,23 +31,32 @@ public class File_IO {
     }
     public static void addContact(Path filePath, Contact newContact) throws IOException {
         List<String> fileContents = Files.readAllLines(filePath);
-        if((newContact.getPhoneNumber().length() >= 10)){
+        List<String> tempContents = Files.readAllLines(filePath);
+        if((newContact.getPhoneNumber().length() == 10)){
             newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),3));
             newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),7));
-        } else{
+        } else if (newContact.getPhoneNumber().length() == 7){
             newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),3));
         }
 
         String newContactInfo = String.format("%-17s | %-13s", newContact.getName() ,newContact.getPhoneNumber());
         for (String item: fileContents) {
             if (item.equals(newContactInfo)) {
-                System.err.println("This contact already exists");
+                System.err.println("This contact already exists with a matching name & number");
                 return;
             }
+            if (item.startsWith(newContact.getName())){
+                System.err.println("A contact with this name already exists.");
+                System.out.println("Would you like to overwrite existing contact?");
+                System.out.println(item);
+                if (Input.yesNo()){
+                    tempContents.remove(item);
+                }
+            }
         }
-
-        fileContents.add(newContactInfo);
-        Files.write(filePath, fileContents);
+        tempContents.add(newContactInfo);
+        System.out.println("Contact successfully created!");
+        Files.write(filePath, tempContents);
     }
 
     private static String insertChar(String str, int position) {
