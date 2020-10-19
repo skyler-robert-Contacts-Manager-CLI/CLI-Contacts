@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class File_IO {
@@ -31,7 +32,8 @@ public class File_IO {
     }
     public static void addContact(Path filePath, Contact newContact) throws IOException {
         List<String> fileContents = Files.readAllLines(filePath);
-        List<String> tempContents = Files.readAllLines(filePath);
+        //The line below was used as a local var to allow modification while running for loop
+        //List<String> tempContents = Files.readAllLines(filePath);
         if((newContact.getPhoneNumber().length() == 10)){
             newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),3));
             newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),7));
@@ -40,23 +42,39 @@ public class File_IO {
         }
 
         String newContactInfo = String.format("%-17s | %-13s", newContact.getName() ,newContact.getPhoneNumber());
-        for (String item: fileContents) {
-            if (item.equals(newContactInfo)) {
+        //This for loop was refactored so no need for tempContents
+//        for (String item: fileContents) {
+//            if (item.equals(newContactInfo)) {
+//                System.err.println("This contact already exists with a matching name & number");
+//                return;
+//            }
+//            if (item.startsWith(newContact.getName())){
+//                System.err.println("A contact with this name already exists.");
+//                System.out.println("Would you like to overwrite existing contact?");
+//                System.out.println(item);
+//                if (Input.yesNo()){
+//                    tempContents.remove(item);
+//                }
+//            }
+//        }
+        for (Iterator<String> line = fileContents.iterator(); line.hasNext(); ) {
+           String item =  line.next();
+           if (item.equals(newContactInfo)) {
                 System.err.println("This contact already exists with a matching name & number");
                 return;
             }
-            if (item.startsWith(newContact.getName())){
+           if(item.startsWith(newContact.getName())){
                 System.err.println("A contact with this name already exists.");
                 System.out.println("Would you like to overwrite existing contact?");
                 System.out.println(item);
-                if (Input.yesNo()){
-                    tempContents.remove(item);
+                if(Input.yesNo()){
+                    line.remove();
                 }
             }
         }
-        tempContents.add(newContactInfo);
+        fileContents.add(newContactInfo);
         System.out.println("Contact successfully created!");
-        Files.write(filePath, tempContents);
+        Files.write(filePath, fileContents);
     }
 
     private static String insertChar(String str, int position) {
