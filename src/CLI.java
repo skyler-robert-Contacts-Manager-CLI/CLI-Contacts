@@ -1,11 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 
 public class CLI {
     public static void main(String[] args) {
@@ -15,6 +11,9 @@ public class CLI {
 
         try{
             Path contactsFilePath = File_IO.createDirectoryAndFile(directoryName, fileName);
+//            for(Contact c : seedList){
+//                File_IO.addContact(contactsFilePath,c);
+//            }
             do{
                 System.out.println();
                 printMenu();
@@ -26,6 +25,15 @@ public class CLI {
         }
         System.out.println("Closing Contacts");
     }
+
+    private static final Contact[] seedList = new Contact[]{
+            new Contact("Skyler Aschenbeck","1234567890"),
+            new Contact("Robert Delarosa","1234123123"),
+            new Contact("Fer Mendoza","1234"),
+            new Contact("Douglas Hirsh","12345612"),
+            new Contact("Daniel Fryar","12345123"),
+            new Contact("Justin Reich","1234512334")
+    };
 
     private static final String[] menuItems = {
             "View contacts",
@@ -40,7 +48,6 @@ public class CLI {
         for (int i = 0; i < menuItems.length; i++) {
             System.out.println((i + 1) + ". " + menuItems[i]);
         }
-
     }
 
     public static boolean getMenuInput(Path filepath) throws IOException{
@@ -54,7 +61,7 @@ public class CLI {
                 System.out.println("Enter Name: ");
                 String contactName = Input.getString();
                 System.out.println("Enter Phone Number: ");
-                int contactNumber = Input.getInt();
+                String contactNumber = Integer.toString(Input.getInt());
                 File_IO.addContact(filepath,new Contact(contactName,contactNumber));
                 break;
             case 3:

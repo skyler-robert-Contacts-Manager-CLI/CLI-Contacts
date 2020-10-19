@@ -8,7 +8,6 @@ import java.util.List;
 public class File_IO {
 
     public static Path createDirectoryAndFile(String directoryName, String fileName) throws IOException {
-        Path directoryPath = Paths.get(directoryName);
         Path filePath = Paths.get(directoryName, fileName);
         if(!Files.exists(filePath)){
             Files.createFile(filePath);
@@ -19,9 +18,9 @@ public class File_IO {
     public static void printContacts(Path filePath) throws IOException {
         System.out.println();
         List<String> fileContents = Files.readAllLines(filePath);
-        System.out.println("--------------------------------");
-        System.out.printf("%-17s | %-11s%n", "Name", "Number");
-        System.out.println("--------------------------------");
+        System.out.println("-----------------------------------");
+        System.out.printf("%-17s | %-13s%n", "Name", "Number");
+        System.out.println("-----------------------------------");
         if (fileContents.size() > 0){
             for (String fileContent : fileContents) {
                 System.out.printf("%s |\n", fileContent);
@@ -32,7 +31,14 @@ public class File_IO {
     }
     public static void addContact(Path filePath, Contact newContact) throws IOException {
         List<String> fileContents = Files.readAllLines(filePath);
-        String newContactInfo = String.format("%-17s | %-11s", newContact.getName() ,newContact.getPhoneNumber());
+        if((newContact.getPhoneNumber().length() >= 10)){
+            newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),3));
+            newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),7));
+        } else{
+            newContact.setPhoneNumber(insertChar(newContact.getPhoneNumber(),3));
+        }
+
+        String newContactInfo = String.format("%-17s | %-13s", newContact.getName() ,newContact.getPhoneNumber());
         for (String item: fileContents) {
             if (item.equals(newContactInfo)) {
                 System.err.println("This contact already exists");
@@ -43,6 +49,12 @@ public class File_IO {
         fileContents.add(newContactInfo);
         Files.write(filePath, fileContents);
     }
+
+    private static String insertChar(String str, int position) {
+        return str.substring(0, position) + "-" + str.substring(position);
+    }
+
+
 
     public static void deleteContact(Path filePath, String contactName) throws IOException{
         List<String> fileContents = Files.readAllLines(filePath);
